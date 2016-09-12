@@ -1,5 +1,5 @@
 # Dystopia
-_Fuck the utopia._
+_Fuck the Utopia and be addicted to Dystopia._
 ## なんだこれ
 ちょっとだけミナコイが便利に使えそうなブラウザです。  
 [yamb](https://github.com/qu2/yamb)の上位互換のようなツールですが、使い勝手が若干というかかなり変わってるので全く別物として捉えてもらって大丈夫です。  
