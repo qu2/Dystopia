@@ -10,6 +10,8 @@ _Fuck the Utopia and be addicted to Dystopia._
 2.0.0  RC 1
 * 近日テストテスト予定
 
+## 使い方
+[こちら](https://github.com/qu2/Dystopia/blob/master/HOWTO.md)
 ## 対応しているOS
 > [.NET Framework 4.5](https://www.microsoft.com/ja-jp/download/details.aspx?id=30653)以上がインストールされた以下のPC
 >> Windows 7  
