@@ -8,12 +8,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using MetroFramework.Forms;
+using Windows.UI.Notifications;
 
 namespace yamb2
 {
@@ -256,6 +258,19 @@ namespace yamb2
             }
         }
 
+        // 連投文章変更(ボタン)
+        private void btnChangeTrollText_CheckedChanged(object sender, EventArgs e)
+        {
+            if (btnChangeTrollText.Checked)
+            {
+                this.boxChangeTrollText.Enabled = true;
+            }
+            else
+            {
+                this.boxChangeTrollText.Enabled = false;
+            }
+        }
+
         // 設定セーブボタン(General)
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -268,6 +283,31 @@ namespace yamb2
 
             // 保存
             Properties.Settings.Default.Save();
+
+            // 完了通知
+            // Windows 8以降
+            try
+            {
+                var tmpl = ToastTemplateType.ToastImageAndText02;
+                var xml = ToastNotificationManager.GetTemplateContent(tmpl);
+
+                var images = xml.GetElementsByTagName("image");
+                var src = images[0].Attributes.GetNamedItem("src");
+                src.InnerText = "http://";
+
+                var texts = xml.GetElementsByTagName("text");
+                texts[0].AppendChild(xml.CreateTextNode("Dystopia Settings"));
+                texts[1].AppendChild(xml.CreateTextNode("設定を保存しました。"));
+
+                var toast = new ToastNotification(xml);
+
+                ToastNotificationManager.CreateToastNotifier("Dystopia").Show(toast);
+            }
+            // Windows 7
+            catch
+            {
+                MessageBox.Show("設定を保存しました。", "Dystopia Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         // ダイス
@@ -303,11 +343,27 @@ namespace yamb2
             }
         }
 
+        // こんばんは
+        private void fpGE_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                HtmlElementCollection all = browser.Document.All;
+                HtmlElementCollection forms = all.GetElementsByName("chat");
+                forms[0].InnerText = ("こんばんは");
+                SendKeys.Send("{ENTER}");
+            }
+            catch
+            {
+                MessageBox.Show("ここで定型文は使用できません。", "Dystopia", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         // 連投
         private void btnTroll_Click(object sender, EventArgs e)
         {
             btnStopTroll.Visible = true;
-            bTimer.Interval = 2000;
+            bTimer.Interval = 1000;
             bTimer.Enabled = true;
         }
         private void bTimer_Tick(object sender, EventArgs e)
@@ -315,10 +371,11 @@ namespace yamb2
             try
             {
                 string random = Guid.NewGuid().ToString("N").Substring(0, 4);
+                string trollText = Properties.Settings.Default.TrollText;
 
                 HtmlElementCollection all = browser.Document.All;
                 HtmlElementCollection forms = all.GetElementsByName("chat");
-                forms[0].InnerText += (Properties.Settings.Default + "(" + random + (")"));
+                forms[0].InnerText += (trollText + "(" + random + (")"));
 
                 SendKeys.Send("{ENTER}");
             }
